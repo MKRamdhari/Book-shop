@@ -1,7 +1,19 @@
+"use client";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import EmailModal from "@/components/first-chapter/read-first-chapter-popup";
 
 export default function Home() {
+
+   // First chapter popup states
+  const [open, setOpen] = useState(false);
+
+  // useEffect(() => {
+  //   const email = localStorage.getItem("chapter_one_email");
+  //   if (!email) setOpen(true);
+  // }, []);
+
   return (
     <main>
       <section className="= bg-background   -mx-4">
@@ -33,8 +45,12 @@ Belief is not required.
         </p>
          <p className=" max-w-2xl mx-auto  ">Start here. Decide for yourself.</p>
         <div className="flex gap-3 justify-center flex-wrap mt-7">
-          <Button className="btn primary">[ READ CHAPTER ONE ]
-          </Button>
+          <Button className="btn primary pointer" onClick={() => setOpen(true)}>[ READ CHAPTER ONE ]</Button>
+          
+          <EmailModal
+            isOpen={open}
+            onClose={() => setOpen(false)}
+          />
         </div>
       </section>
 

@@ -143,3 +143,101 @@ html{
 .custom-font {
   font-size: 18px !important;
 }
+
+.pointer{
+  cursor: pointer;
+}
+/* Read first chapter model section start */
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Modal box */
+.modal {
+  background: #0b0b0b;
+  border: 1px solid #222;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  position: relative;
+}
+
+/* Typography */
+.modal-subtitle {
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  color:var(--color-white);
+  margin-bottom: 0.5rem;
+}
+
+
+/* Form */
+.modal-form input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #333;
+  padding: 0.8rem;
+  color: #fff;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.modal-form input::placeholder {
+  color: #555;
+}
+
+.modal-form button {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  padding: 0.75rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-form button:hover {
+  opacity: 0.9;
+}
+
+/* Close */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  color: #555;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .modal {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Read first chapter model section end */
+/*Error handling on model section start */
+.modal-error {
+  color: #b94a48;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+.modal-form input:has(+ .modal-error),
+.modal-form input.error {
+  border-color: #b94a48;
+}
+/*Error handling on model section end */
