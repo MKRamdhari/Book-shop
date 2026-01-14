@@ -31,9 +31,8 @@ function page() {
           <p className="mt-4 ">Pre-order is open.</p>
           <p className="mt-4 ">Reservations are open</p>
 
-
-
-          <Button className="btn primary">[ RESERVE DIGITAL ACCESS ]</Button>
+          <a href="https://buy.stripe.com/test_dRm28rgjG7qubnae5cao80O">
+          <Button className="btn primary">[ RESERVE DIGITAL ACCESS ]</Button></a>
           {/* <div className="border-t flex gap-3 justify-center flex-wrap mt-4 pt-2">
             <Button className="btn primary">[ RESERVE DIGITAL ACCESS ]</Button>
           </div> */}
