@@ -1,14 +1,17 @@
 "use client";
 import Image from "next/image";
 import StripePayButton from "@/components/StripePayButton";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+
+import { Suspense, use, useState } from "react";
 import PaymentConfirmationPopup from "@/components/payment-confirmation/PaymentConfirmationPopup";
 
-function page() {
-  const tx = useSearchParams().get("tx");
-
-  const [open, setOpen] = useState(true);
+function page({
+  searchParams,
+}: {
+  searchParams: Promise<{ tx?: string, status?: string }>
+}) {
+  const params = use(searchParams)
+ const [open, setOpen] = useState(true);
 
   return (
     <main>
@@ -51,10 +54,13 @@ function page() {
       </section>
 
       {/* Payment confirmation popup */}
-      <PaymentConfirmationPopup
+      <Suspense fallback={null}>
+        <PaymentConfirmationPopup
         isOpen={open}
+        pageParms={params}
         onClose={() => setOpen(false)}
       />
+      </Suspense>
       {/* <section className="container mt-40">
         <p className="uppercase ">Introduction</p>
         <h2 className="text-white mt-2.5 text-2xl">Ghost in the Machine</h2>

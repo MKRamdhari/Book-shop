@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+
 
 type PaymentUIState =
   | "loading"
@@ -12,14 +12,19 @@ type PaymentUIState =
 
 interface Props {
   isOpen: boolean;
+  pageParms: { tx?: string, status?: string }
   onClose: () => void;
 }
 
 export default function PaymentConfirmationPopup({
   isOpen,
+  pageParms,
   onClose,
 }: Props) {
-  const searchParams = useSearchParams();
+
+  const tx = pageParms.tx;
+  const status = pageParms.status;
+
   const [visible, setVisible] = useState(false);
   const [uiState, setUIState] = useState<PaymentUIState>("loading");
 
@@ -39,7 +44,7 @@ export default function PaymentConfirmationPopup({
 
     //Resolve final state
     const finalTimer = setTimeout(() => {
-      const status = searchParams.get("status");
+      
 
       switch (status) {
         case "success":
@@ -60,7 +65,7 @@ export default function PaymentConfirmationPopup({
       clearTimeout(pendingTimer);
       clearTimeout(finalTimer);
     };
-  }, [isOpen, searchParams]);
+  }, [isOpen, pageParms]);
 
   const closePopup = () => {
     setVisible(false);
