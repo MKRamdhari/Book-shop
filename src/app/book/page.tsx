@@ -11,7 +11,8 @@ function page({
   searchParams: Promise<{ tx?: string, status?: string }>
 }) {
   const params = use(searchParams)
- const [open, setOpen] = useState(true);
+  const paymentStatusPopup = params.status ? true : false;
+  const [open, setOpen] = useState(paymentStatusPopup);
 
   return (
     <main>

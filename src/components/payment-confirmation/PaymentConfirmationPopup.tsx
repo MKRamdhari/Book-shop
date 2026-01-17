@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-
 type PaymentUIState =
   | "loading"
   | "pending"
@@ -22,7 +21,7 @@ export default function PaymentConfirmationPopup({
   onClose,
 }: Props) {
 
-  const tx = pageParms.tx;
+  //const tx = pageParms.tx;
   const status = pageParms.status;
 
   const [visible, setVisible] = useState(false);
@@ -43,8 +42,7 @@ export default function PaymentConfirmationPopup({
     }, 800);
 
     //Resolve final state
-    const finalTimer = setTimeout(() => {
-      
+    const finalTimer = setTimeout(() => {      
 
       switch (status) {
         case "success":
