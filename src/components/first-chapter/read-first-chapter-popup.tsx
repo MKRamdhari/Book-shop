@@ -21,7 +21,6 @@ export default function EmailModal({
     document.body.style.overflow = "hidden";
 
     const savedEmail = localStorage.getItem(STORAGE_KEY);
-
     // Prefill ONLY if saved email exists
     if (savedEmail) {
       setEmail(savedEmail);
@@ -39,7 +38,6 @@ export default function EmailModal({
     setError("");
   }
 }, [isOpen]);
-
 
   if (!visible) return null;
 
