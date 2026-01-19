@@ -11,34 +11,8 @@ const PRICE_ID = process.env.PRICE_ID as string ?? "" ;
 
 export async function POST() {
     try{
-        const transactionId = crypto.randomUUID();
-        const createdAt = new Date();
-        const expiryDate = new Date(
-        createdAt.getTime() + expiryHours * 60 * 60 * 1000
-        );
-
-        await saveTransaction({
-            transaction_id: transactionId,
-            stripe_transaction_id:"",
-            status: "pending",
-            download_expiry: expiryDate.toISOString(),
-            created_at: createdAt.toISOString(),
-        });
-
-        const session = await stripe.checkout.sessions.create({
-            mode: "payment",
-            line_items: [
-            { price: PRICE_ID, quantity: 1 },
-            ],
-            
-            success_url: `${BASE_URL}/book?status=success&tx=${transactionId}`,
-            cancel_url: `${BASE_URL}/book?status=canceled&tx=${transactionId}`,
-            metadata: {
-            transaction_id: transactionId,
-            },
-        });
-
-        return NextResponse.json({ url: session.url });
+        
+        return NextResponse.json({ url: "" });
 
     } catch (error) {
         console.error(error);
