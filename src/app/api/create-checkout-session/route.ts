@@ -17,13 +17,13 @@ export async function POST() {
         createdAt.getTime() + expiryHours * 60 * 60 * 1000
         );
 
-        await saveTransaction({
-            transaction_id: transactionId,
-            stripe_transaction_id:"",
-            status: "pending",
-            download_expiry: expiryDate.toISOString(),
-            created_at: createdAt.toISOString(),
-        });
+        // await saveTransaction({
+        //     transaction_id: transactionId,
+        //     stripe_transaction_id:"",
+        //     status: "pending",
+        //     download_expiry: expiryDate.toISOString(),
+        //     created_at: createdAt.toISOString(),
+        // });
 
         const session = await stripe.checkout.sessions.create({
             mode: "payment",

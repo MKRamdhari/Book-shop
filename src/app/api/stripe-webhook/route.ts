@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-import { updateTransactionStatus } from "@/lib/transactions";
+//import { updateTransactionStatus } from "@/lib/transactions";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -49,7 +49,7 @@ async function handleStripeEvent(event: Stripe.Event) {
                 return;
             }
 
-            await updateTransactionStatus(transactionId, "paid", stripeTransactionId);
+           // await updateTransactionStatus(transactionId, "paid", stripeTransactionId);
             break;
         }
 
@@ -63,7 +63,7 @@ async function handleStripeEvent(event: Stripe.Event) {
                 return;
             }
 
-            await updateTransactionStatus(transactionId, "expired", stripeTransactionId);
+            //await updateTransactionStatus(transactionId, "expired", stripeTransactionId);
             break;
         }
 
@@ -77,7 +77,7 @@ async function handleStripeEvent(event: Stripe.Event) {
                 return;
             }
 
-            await updateTransactionStatus(transactionId, "refunded", stripeTransactionId);
+            //await updateTransactionStatus(transactionId, "refunded", stripeTransactionId);
             break;
         }
 
