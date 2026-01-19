@@ -2,7 +2,7 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-//import { saveTransaction } from "@/lib/transactions";
+import { saveTransaction } from "@/lib/transactions";
 
 const BASE_URL = process.env.BASE_URL??"";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -17,13 +17,13 @@ export async function POST() {
         createdAt.getTime() + expiryHours * 60 * 60 * 1000
         );
 
-        // await saveTransaction({
-        //     transaction_id: transactionId,
-        //     stripe_transaction_id:"",
-        //     status: "pending",
-        //     download_expiry: expiryDate.toISOString(),
-        //     created_at: createdAt.toISOString(),
-        // });
+        await saveTransaction({
+            transaction_id: transactionId,
+            stripe_transaction_id:"",
+            status: "pending",
+            download_expiry: expiryDate.toISOString(),
+            created_at: createdAt.toISOString(),
+        });
 
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
