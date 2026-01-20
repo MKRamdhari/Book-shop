@@ -1,88 +1,67 @@
+export const runtime = "nodejs";
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-import { updateTransactionStatus } from "@/lib/transactions";
+import { supabase } from "@/lib/supabase/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
-    const body = await req.text();
-    const sig = req.headers.get("stripe-signature");
+  const body = await req.text();
+  const sig = req.headers.get("stripe-signature")!;
 
-    if (!sig) {
-        return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+  let event: Stripe.Event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      body,
+      sig,
+      endpointSecret
+    );
+  } catch (err) {
+    console.error("Webhook signature verification failed.");
+    return new NextResponse("Invalid signature", { status: 400 });
+  }
+
+  switch (event.type) {
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+
+      const transactionId = session.metadata?.transaction_id;
+
+      if (!transactionId) break;
+
+      const { error } = await supabase
+        .from("transactions")
+        .update({
+          status: "paid",
+          stripe_transaction_id: session.payment_intent as string,
+          //paid_at: new Date().toISOString(),
+        })
+        .eq("transaction_id", transactionId);
+
+      if (error) {
+        console.error("Supabase update error:", error);
+        return new NextResponse("DB error", { status: 500 });
+      }
+
+      break;
     }
 
-    let event: Stripe.Event;
+    case "checkout.session.expired": {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const transactionId = session.metadata?.transaction_id;
 
-    try {
-        event = stripe.webhooks.constructEvent(
-            body,
-            sig,
-            process.env.STRIPE_WEBHOOK_SECRET!
-        );
-    } catch (err) {
-        console.error("Webhook signature verification failed.", err);
-        return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+      if (!transactionId) break;
+
+      await supabase
+        .from("transactions")
+        .update({ status: "expired" })
+        .eq("transaction_id", transactionId);
+
+      break;
     }
+  }
 
-    try {
-        await handleStripeEvent(event);
-    } catch (err) {
-        // IMPORTANT: still return 200 to prevent endless retries
-        console.error("Webhook processing error:", err);
-    }
-
-    return NextResponse.json({ received: true });
-}
-
-async function handleStripeEvent(event: Stripe.Event) {
-    let transactionId: string | undefined;
-    
-    switch (event.type) {
-        case "checkout.session.completed": {
-            const session = event.data.object as Stripe.Checkout.Session;
-            transactionId = session.metadata?.transaction_id;
-            const stripeTransactionId = "";
-
-            if (!transactionId) {
-                console.warn("Missing transaction_id in checkout.session.completed");
-                return;
-            }
-
-            await updateTransactionStatus(transactionId, "paid", stripeTransactionId);
-            break;
-        }
-
-        case "checkout.session.expired": {
-            const session = event.data.object as Stripe.Checkout.Session;
-            transactionId = session.metadata?.transaction_id;
-            const stripeTransactionId = "";
-
-            if (!transactionId) {
-                console.warn("Missing transaction_id in checkout.session.expired");
-                return;
-            }
-
-            await updateTransactionStatus(transactionId, "expired", stripeTransactionId);
-            break;
-        }
-
-        case "charge.refunded": {
-            const charge = event.data.object as Stripe.Charge;
-            transactionId = charge.metadata?.transaction_id;
-            const stripeTransactionId = "";
-
-            if (!transactionId) {
-                console.warn("Missing transaction_id in charge.refunded");
-                return;
-            }
-
-            await updateTransactionStatus(transactionId, "refunded", stripeTransactionId);
-            break;
-        }
-
-        default:
-            // Ignore unhandled events
-            return;
-    }
+  return NextResponse.json({ received: true });
 }

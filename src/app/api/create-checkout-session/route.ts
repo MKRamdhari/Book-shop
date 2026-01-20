@@ -4,21 +4,43 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { saveTransaction } from "@/lib/transactions";
 
-const BASE_URL = process.env.BASE_URL??"";
+const BASE_URL = process.env.BASE_URL ?? "";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const expiryHours = Number(process.env.URL_EXPIRY_HOURS ?? 1);
-const PRICE_ID = process.env.PRICE_ID as string ?? "" ;
+const PRICE_ID = process.env.PRICE_ID ?? "";
 
 export async function POST() {
-    try{
-        
-        return NextResponse.json({ url: "" });
+  try {
+    const transactionId = crypto.randomUUID();
+    const createdAt = new Date();
+    const expiryDate = new Date(
+      createdAt.getTime() + expiryHours * 60 * 60 * 1000
+    );
 
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json(
-            { error: "Something went wrong" },
-            { status: 500 }
-        );
-    }
+    await saveTransaction({
+      transaction_id: transactionId,
+      stripe_transaction_id: "",
+      status: "pending",
+      download_expiry: expiryDate.toISOString(),
+      created_at: createdAt.toISOString(),
+    });
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: [{ price: PRICE_ID, quantity: 1 }],
+      success_url: `${BASE_URL}/book?status=success&tx=${transactionId}`,
+      cancel_url: `${BASE_URL}/book?status=canceled&tx=${transactionId}`,
+      metadata: {
+        transaction_id: transactionId,
+      },
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
+  }
 }
