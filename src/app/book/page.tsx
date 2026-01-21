@@ -4,11 +4,12 @@ import StripePayButton from "@/components/StripePayButton";
 
 import { Suspense, use, useState } from "react";
 import PaymentConfirmationPopup from "@/components/payment-confirmation/PaymentConfirmationPopup";
+import HomeClient from "../HomeClient";
 
 function page({
   searchParams,
 }: {
-  searchParams: Promise<{ tx?: string, status?: string }>
+  searchParams: Promise<{ tx?: string, status?: string, token?:string }>
 }) {
   const params = use(searchParams)
   const paymentStatusPopup = params.status ? true : false;
@@ -61,6 +62,7 @@ function page({
         pageParms={params}
         onClose={() => setOpen(false)}
       />
+      <HomeClient />
       </Suspense>
       {/* <section className="container mt-40">
         <p className="uppercase ">Introduction</p>

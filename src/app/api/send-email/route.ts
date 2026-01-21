@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       const transactionIdValue = parts[1] ?? "";
       templatePath = path.join(
         process.cwd(),
-        "emails/full-ebook.html"
+        "emails/full-book.html"
       );
       pdfLink = `${process.env.BASE_URL}?token=${transactionIdValue}`      
     }
