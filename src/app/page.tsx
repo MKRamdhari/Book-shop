@@ -8,9 +8,10 @@
 
 
 "use client";
-import { use, useState } from "react";
+import { Suspense, use, useState } from "react";
 import { Button } from "@/components/ui/button";
 import EmailModal from "@/components/first-chapter/read-first-chapter-popup";
+import HomeClient from "./HomeClient";
 
 export default function Home() {
  
@@ -54,6 +55,11 @@ export default function Home() {
             isOpen={open}
             onClose={() => setOpen(false)}
           />
+
+          <Suspense fallback={null}>
+          <HomeClient />
+          </Suspense>
+
         </div>
       </section>
     </main>
