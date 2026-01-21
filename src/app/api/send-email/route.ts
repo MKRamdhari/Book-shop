@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const { email, subject, emailType } = await req.json();
     let pdfLink = '';
     let templatePath = '';
-    if (emailType === 'FirstFirst-Chapter') {
+    if (emailType === 'First-Chapter') {
       pdfLink = `${process.env.BASE_URL}/pdfs/chapter-one.pdf`;
 
       templatePath = path.join(

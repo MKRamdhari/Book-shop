@@ -19,7 +19,7 @@ const sendEmail = async (Email: string, Subject: string, emailType: string) => {
         }),
     });
 
-    const data = await res.json();
+    return await res.json();
     // if (res.ok || data.success) {
     //     // Open Chapter 1 PDF in new tab
     //     window.open("/pdfs/chapter-one.pdf", "_blank", "noopener,noreferrer");
@@ -64,7 +64,8 @@ export async function POST(req: Request) {
             if (customerEmail) {
                 const mailType = `Full-Book*${transactionId}`;
                 const emailSubject = 'Your Free Ebook - LET ME GIVE YOU THE GAME!';
-                sendEmail(customerEmail, emailSubject, mailType);
+                console.log('mailType', mailType);
+                await sendEmail(customerEmail, emailSubject, mailType);
             }
 
             if (error) {
