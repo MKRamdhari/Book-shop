@@ -7,14 +7,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 // send email
-const sendEmail = async (Email: string, Subject: string, Type: string) => {
+const sendEmail = async (Email: string, Subject: string, emailType: string) => {
     const res = await fetch("/api/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             email: Email,
             subject: Subject,
-            type: Type
+            emailType: emailType
         }),
     });
 
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
             const session = event.data.object as Stripe.Checkout.Session;
             const customerEmail = session.customer_details?.email ?? null;
             const transactionId = session.metadata?.transaction_id;
-            console.log('session', session);
+           
             if (!transactionId) break;
 
             const { error } = await supabase

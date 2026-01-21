@@ -71,14 +71,14 @@ export default function EmailModal({
   };
 
   // send email
-  const sendEmail = async (Email: string, Subject: string, Type: string) => {
+  const sendEmail = async (Email: string, Subject: string, emailType: string) => {
     const res = await fetch("/api/send-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: Email,
         subject: Subject,
-        type: Type
+        emailType: emailType
       }),
     });
 
