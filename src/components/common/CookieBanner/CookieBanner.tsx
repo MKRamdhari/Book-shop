@@ -1,20 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const CookieBanner: React.FC = () => {
-
     const [showBanner, setShowBanner] = useState(() => {
         if (typeof window !== "undefined") {
-            // Only check localStorage on client
             return !localStorage.getItem("cookie-consent");
         }
-        return false; // On server, render nothing
+        return false;
     });
 
     const acceptCookies = () => {
-        localStorage.setItem("cookie-consent", "true");
+        localStorage.setItem("cookie-consent", "accepted");
+        setShowBanner(false);
+    };
+
+    const declineCookies = () => {
+        localStorage.setItem("cookie-consent", "declined");
         setShowBanner(false);
     };
 
@@ -22,8 +25,7 @@ const CookieBanner: React.FC = () => {
 
     return (
         <div
-            className="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 flex flex-col md:flex-row justify-between items-center z-50"
-            style={{ gap: "10px" }}
+            className="fixed bottom-0 left-0 right-0 bg-gray-800 text-white p-4 flex flex-col md:flex-row justify-between items-center z-50 gap-2"
         >
             <p className="text-sm max-w-xl">
                 We use cookies to improve your experience on our website. By
@@ -32,12 +34,22 @@ const CookieBanner: React.FC = () => {
                     Cookie Policy
                 </Link>.
             </p>
-            <button
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded mt-2 md:mt-0"
-                onClick={acceptCookies}
-            >
-                Accept
-            </button>
+
+            <div className="flex gap-2">
+                <button
+                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+                    onClick={declineCookies}
+                >
+                    Decline
+                </button>
+
+                <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                    onClick={acceptCookies}
+                >
+                    Accept
+                </button>
+            </div>
         </div>
     );
 };
