@@ -61,7 +61,7 @@ export default function PopUp({ popUpOpen, onClose }: PopupModalProps) {
           <div
             className={`mt-6 ${isButtonDisabled ? "pointer-events-none opacity-50" : ""}`}
           >
-            <StripePayButton btnText="Digital Edition" />
+            <StripePayButton btnText="Continue to checkout" />
           </div>
 
         </div>
