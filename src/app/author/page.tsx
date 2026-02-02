@@ -20,8 +20,7 @@ function page() {
           <p className="max-w-2xl mx-auto">The material stands on its own.</p>
           <div className="flex gap-3 justify-center flex-wrap mt-7">
             <Button className="btn primary">[ READ CHAPTER ONE ]</Button>
-            <Button className="btn text-color-red">[ CTA – REMOVED ]</Button>
-
+          
             {/* <Button onClick={() => setPopUpOpen(true)} className="btn primary">[ Digital Edition ]</Button> */}
 
             <PopUp
