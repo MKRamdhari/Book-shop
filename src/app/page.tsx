@@ -1,13 +1,11 @@
 "use client";
 import { Suspense, use, useState } from "react";
-import { Button } from "@/components/ui/button";
-import EmailModal from "@/components/first-chapter/read-first-chapter-popup";
+
 import HomeClient from "./HomeClient";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
-
-  // First chapter popup states
-  const [open, setOpen] = useState(false);
 
   return (
     <main>
@@ -29,9 +27,10 @@ export default function Home() {
         <p className="max-w-2xl mx-auto">Written with British restraint. Belief is not required.</p>
         <p className="max-w-2xl mx-auto">Decide for yourself.</p>
         <div className="flex gap-3 justify-center flex-wrap mt-7">
-          <Button className="btn primary pointer" onClick={() => setOpen(true)}>[ READ CHAPTER ONE ]</Button>
 
-          <EmailModal isOpen={open} onClose={() => setOpen(false)} />
+          <Link key={'/chapter-one'} href={'/chapter-one'} >
+            <Button className="btn primary pointer">[ READ CHAPTER ONE ]</Button>
+          </Link>
 
           <Suspense fallback={null}>
             <HomeClient />

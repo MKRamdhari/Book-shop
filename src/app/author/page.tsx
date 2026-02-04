@@ -4,6 +4,7 @@ import { Suspense, use, useState } from "react";
 import PopUp from "@/components/popup/popup";
 import StripePayButton from "@/components/StripePayButton";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 
 function page() {
@@ -19,8 +20,11 @@ function page() {
           <p className="max-w-2xl mx-auto">No biography is required.</p>
           <p className="max-w-2xl mx-auto">The material stands on its own.</p>
           <div className="flex gap-3 justify-center flex-wrap mt-7">
-            <Button className="btn primary">[ READ CHAPTER ONE ]</Button>
-          
+
+            <Link key={'/chapter-one'} href={'/chapter-one'} >
+              <Button className="btn primary pointer">[ READ CHAPTER ONE ]</Button>
+            </Link>
+
             {/* <Button onClick={() => setPopUpOpen(true)} className="btn primary">[ Digital Edition ]</Button> */}
 
             <PopUp
