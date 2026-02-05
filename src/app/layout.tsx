@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theam-provider";
 import AppHeader from "@/components/common/app-header";
 import AppFooter from "@/components/common/app-footer";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark">
           <AppHeader />
           <div className="p-4">{children}</div>
+          <Toaster position="top-right" reverseOrder={false} />
           <AppFooter />
         </ThemeProvider>
       </body>

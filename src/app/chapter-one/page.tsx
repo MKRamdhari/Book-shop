@@ -77,9 +77,8 @@ const Page: React.FC = () => {
                         fight my way out of this. But there was no way out, no hack, no brute force, just the reality. </p>
                 </div>
 
-
                 <div className="flex gap-3 justify-center flex-wrap mt-7">
-                    <Button className="btn primary pointer" onClick={() => setOpen(true)}>[ Continue reading - delivered privately. ]</Button>
+                    <Button className="btn primary pointer" onClick={() => setOpen(true)}>[ CONTINUE READING - DELIVERED PRIVATELY ]</Button>
 
                     <EmailModal isOpen={open} onClose={() => setOpen(false)} />
                 </div>

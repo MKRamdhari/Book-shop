@@ -1,5 +1,5 @@
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
-
+import toast from "react-hot-toast";
 const STORAGE_KEY = "chapter_one_email";
 
 interface EmailModalProps {
@@ -51,12 +51,14 @@ export default function EmailModal({
     setError("");
 
     if (!email) {
-      setError("Email is required.");
+      setError("error");
+      toast.error("Email is required.");
       return;
     }
 
     if (!isValidEmail(email)) {
-      setError("Please enter a valid email address.");
+      setError("error");
+      toast.error("Please enter a valid email address.");
       return;
     }
 
@@ -67,25 +69,39 @@ export default function EmailModal({
     sendEmail(email, emailSubject, MailType);
 
     // Close modal
-    onClose();
+    //onClose();
   };
 
   // send email
   const sendEmail = async (Email: string, Subject: string, emailType: string) => {
-    const res = await fetch("/api/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: Email,
-        subject: Subject,
-        emailType: emailType
-      }),
-    });
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: Email,
+          subject: Subject,
+          emailType: emailType
+        }),
+      });
 
-    const data = await res.json();
-    if (res.ok || data.success) {
-      // Open Chapter 1 PDF in new tab
-      window.open("/pdfs/chapter-one.pdf", "_blank", "noopener,noreferrer");
+      const data = await res.json();
+      if (res.ok || data.success) {
+        onClose(); //close the popup
+        toast.success("Email send successfully.");
+        // Open Chapter 1 PDF in new tab
+        window.open("/pdfs/chapter-one.pdf", "_blank", "noopener,noreferrer");
+      } else {
+        const message = data?.message || "Failed to send email.";
+        toast.error(message);
+        setError("error"); // optional, show in modal
+        console.error("API error:", message);
+      }
+    } catch (err: any) {
+      // Network or unexpected error
+      toast.error(err.message || "Something went wrong while sending the email.");
+      setError(err.message || "Unexpected error occurred.");
+      console.error("Send email error:", err);
     }
   };
 
@@ -119,7 +135,7 @@ export default function EmailModal({
                 onChange={handleEmailChange}
               />
 
-              {error && <p className="modal-error">{error}</p>}
+              {error && <p className="modal-error"></p>}
 
               <button type="submit">CONTINUE</button>
             </form>
