@@ -38,18 +38,7 @@ export async function POST(req: Request) {
       );
       pdfLink = `${process.env.BASE_URL}`;
 
-    } else if (emailType === "Access-Delivery") {
-      // This email will go when access-delivery
-
-      const parts = emailType.split("*");
-      const transactionIdValue = parts[1] ?? "";
-
-      templatePath = path.join(
-        process.cwd(),
-        "emails/access-delivery.html"
-      );
-      pdfLink = `${process.env.BASE_URL}?token=${transactionIdValue}`;
-    }
+    } 
     else if (emailType === "Payment-failed") {
       // This email will go whe payment is canceled
 
@@ -60,13 +49,13 @@ export async function POST(req: Request) {
       pdfLink = `${process.env.BASE_URL}`;
     }
 
-    else { // This is used for sending full book email
+    else { // This is used for sending full book email Access-Delivery
       const parts = emailType.split("*");
       const transactionIdValue = parts[1] ?? "";
 
       templatePath = path.join(
         process.cwd(),
-        "emails/full-book.html"
+        "emails/access-delivery.html"
       );
       pdfLink = `${process.env.BASE_URL}?token=${transactionIdValue}`;
     }
