@@ -7,11 +7,13 @@ import { saveTransactionWithCheck } from "@/lib/subscribedEmails";
 
 export async function POST(req: Request) {
   try {
-    
-    const { email, subject, emailType } = await req.json();
 
+    const { email, subject, emailType } = await req.json();
+    
     let pdfLink = "";
     let templatePath = "";
+
+    console.log('emailType : -', emailType);
 
     if (emailType === "First-Chapter") {
       pdfLink = `${process.env.BASE_URL}/pdfs/chapter-one.pdf`;
@@ -25,9 +27,27 @@ export async function POST(req: Request) {
 
       templatePath = path.join(
         process.cwd(),
-        "emails/free-ebook.html"
+        "emails/free-chapter-one.html"
       );
-    } else {
+    } else if (emailType === "Purchase-Confirmed") {
+      // This email will go whe payment is confirmed
+
+      templatePath = path.join(
+        process.cwd(),
+        "emails/purchase-confirmation.html"
+      );
+      pdfLink = `${process.env.BASE_URL}`;
+    } else if (emailType === "Payment-failed") {
+      // This email will go whe payment is canceled
+
+      templatePath = path.join(
+        process.cwd(),
+        "emails/payment-faild"
+      );
+      pdfLink = `${process.env.BASE_URL}`;
+    }
+
+    else { // This is used for sending full book email
       const parts = emailType.split("*");
       const transactionIdValue = parts[1] ?? "";
 
@@ -38,6 +58,8 @@ export async function POST(req: Request) {
       pdfLink = `${process.env.BASE_URL}?token=${transactionIdValue}`;
     }
 
+
+
     // Ensure templatePath is set
     if (!templatePath) {
       throw new Error("EMAIL_TEMPLATE_NOT_FOUND");
@@ -46,7 +68,7 @@ export async function POST(req: Request) {
     const html = fs
       .readFileSync(templatePath, "utf8")
       .replace("{{PDF_LINK}}", pdfLink);
-   
+
     //Send email with Resend
     await sendEmail({
       to: email,

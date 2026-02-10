@@ -30,8 +30,7 @@ export default function PopUp({ popUpOpen, onClose }: PopupModalProps) {
                 checked={check1}
                 onChange={(e) => setCheck1(e.target.checked)}
               />
-              <label htmlFor="terms">
-                &nbsp;I agree to the{" "}
+              <label htmlFor="terms">I agree to the{" "}
                 <Link href="/legal#terms" className="underline">
                   Terms & Conditions
                 </Link>{" "}
@@ -49,8 +48,7 @@ export default function PopUp({ popUpOpen, onClose }: PopupModalProps) {
                 checked={check2}
                 onChange={(e) => setCheck2(e.target.checked)}
               />
-              <label htmlFor="consent">&nbsp;
-                I consent to immediate access to digital content and acknowledge
+              <label htmlFor="consent">I consent to immediate access to digital content and acknowledge
                 I lose my right to cancel once the download begins.
               </label>
             </div>

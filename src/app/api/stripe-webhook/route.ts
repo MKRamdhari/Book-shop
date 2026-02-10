@@ -21,7 +21,6 @@ const sendEmail = async (Email: string, Subject: string, emailType: string) => {
 
     return await res.json();
     // if (res.ok || data.success) {
-    //     // Open Chapter 1 PDF in new tab
     //     window.open("/pdfs/chapter-one.pdf", "_blank", "noopener,noreferrer");
     // }
 };
@@ -29,7 +28,7 @@ const sendEmail = async (Email: string, Subject: string, emailType: string) => {
 export async function POST(req: Request) {
     const body = await req.text();
     const sig = req.headers.get("stripe-signature")!;
-
+    console.log('comming on post main function....');
     let event: Stripe.Event;
 
     try {
@@ -48,7 +47,7 @@ export async function POST(req: Request) {
             const session = event.data.object as Stripe.Checkout.Session;
             const customerEmail = session.customer_details?.email ?? null;
             const transactionId = session.metadata?.transaction_id;
-           
+
             if (!transactionId) break;
 
             const { error } = await supabase
@@ -62,10 +61,36 @@ export async function POST(req: Request) {
 
             // check email and throe email
             if (customerEmail) {
+
                 const mailType = `Full-Book*${transactionId}`;
                 const emailSubject = 'The Digital Edition';
-               // console.log('mailType', mailType);
-                await sendEmail(customerEmail, emailSubject, mailType);
+                // console.log('mailType', mailType);
+                // let maila = await sendEmail(customerEmail, emailSubject, mailType);
+                // console.log('email first', maila);
+
+                // //Purchase-Confirmed
+                // let mailb = await sendEmail(customerEmail, "Your Digital Edition is ready", "Purchase-Confirmed");
+                // console.log('email second', mailb);
+
+                const results = await Promise.allSettled([
+                    sendEmail(customerEmail, emailSubject, mailType),
+                    sendEmail(
+                        customerEmail,
+                        "Your Digital Edition is ready",
+                        "Purchase-Confirmed"
+                    ),
+                ]);
+
+                results.forEach((result, index) => {
+                    if (result.status === "fulfilled") {
+                        console.log(`email ${index + 1} success`, result.value);
+                    } else {
+                        console.error(`email ${index + 1} failed`, result.reason);
+                        return new NextResponse("Mail error", { status: 500 });
+                    }
+                });
+
+
             }
 
             if (error) {
@@ -79,6 +104,13 @@ export async function POST(req: Request) {
         case "checkout.session.expired": {
             const session = event.data.object as Stripe.Checkout.Session;
             const transactionId = session.metadata?.transaction_id;
+            // const customerEmail = session.customer_details?.email ?? null;
+
+            // // check email and throe email
+            // if (customerEmail) {                             
+            //     //Payment failed
+            //     await sendEmail(customerEmail, "Your payment could not be completed.", "Payment-failed");
+            // }
 
             if (!transactionId) break;
 

@@ -65,7 +65,7 @@ export default function EmailModal({
     // Save email
     localStorage.setItem(STORAGE_KEY, email);
     const MailType = "First-Chapter";
-    const emailSubject = 'Read Chapter One';
+    const emailSubject = 'Chapter One - Trapped';
     sendEmail(email, emailSubject, MailType);
 
     // Close modal
