@@ -62,22 +62,19 @@ export async function POST(req: Request) {
             // check email and throe email
             if (customerEmail) {
 
-                const mailType = `Full-Book*${transactionId}`;
-                const emailSubject = 'The Digital Edition';
-                // console.log('mailType', mailType);
-                // let maila = await sendEmail(customerEmail, emailSubject, mailType);
-                // console.log('email first', maila);
-
-                // //Purchase-Confirmed
-                // let mailb = await sendEmail(customerEmail, "Your Digital Edition is ready", "Purchase-Confirmed");
-                // console.log('email second', mailb);
-
+                const mailType = `Access-Delivery*${transactionId}`;
+                
                 const results = await Promise.allSettled([
-                    sendEmail(customerEmail, emailSubject, mailType),
+                    //sendEmail(customerEmail, emailSubject, mailType),
                     sendEmail(
                         customerEmail,
                         "Your Digital Edition is ready",
                         "Purchase-Confirmed"
+                    ),
+                    sendEmail(
+                        customerEmail,
+                        "Access to your Digital Edition",
+                        mailType
                     ),
                 ]);
 
@@ -89,7 +86,6 @@ export async function POST(req: Request) {
                         return new NextResponse("Mail error", { status: 500 });
                     }
                 });
-
 
             }
 
@@ -104,13 +100,13 @@ export async function POST(req: Request) {
         case "checkout.session.expired": {
             const session = event.data.object as Stripe.Checkout.Session;
             const transactionId = session.metadata?.transaction_id;
-            // const customerEmail = session.customer_details?.email ?? null;
+            const customerEmail = session.customer_details?.email ?? null;
 
-            // // check email and throe email
-            // if (customerEmail) {                             
-            //     //Payment failed
-            //     await sendEmail(customerEmail, "Your payment could not be completed.", "Payment-failed");
-            // }
+            // check email and throe email
+            if (customerEmail) {                             
+                //Payment failed
+                await sendEmail(customerEmail, "Your payment could not be completed.", "Payment-failed");
+            }
 
             if (!transactionId) break;
 

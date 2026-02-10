@@ -30,14 +30,27 @@ export async function POST(req: Request) {
         "emails/free-chapter-one.html"
       );
     } else if (emailType === "Purchase-Confirmed") {
-      // This email will go whe payment is confirmed
+      // This email will go when payment is confirmed
 
       templatePath = path.join(
         process.cwd(),
         "emails/purchase-confirmation.html"
       );
       pdfLink = `${process.env.BASE_URL}`;
-    } else if (emailType === "Payment-failed") {
+
+    } else if (emailType === "Access-Delivery") {
+      // This email will go when access-delivery
+
+      const parts = emailType.split("*");
+      const transactionIdValue = parts[1] ?? "";
+
+      templatePath = path.join(
+        process.cwd(),
+        "emails/access-delivery.html"
+      );
+      pdfLink = `${process.env.BASE_URL}?token=${transactionIdValue}`;
+    }
+    else if (emailType === "Payment-failed") {
       // This email will go whe payment is canceled
 
       templatePath = path.join(
