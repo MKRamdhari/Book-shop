@@ -43,6 +43,8 @@ export async function POST(req: Request) {
     return new NextResponse("Invalid signature", { status: 400 });
   }
 
+  console.log("Webhook event type:", event.type);
+  
   try {
     switch (event.type) {
       //  Payment Success
