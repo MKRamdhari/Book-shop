@@ -20,15 +20,11 @@ const sendEmail = async (Email: string, Subject: string, emailType: string) => {
     });
 
     return await res.json();
-    // if (res.ok || data.success) {
-    //     window.open("/pdfs/chapter-one.pdf", "_blank", "noopener,noreferrer");
-    // }
 };
 
 export async function POST(req: Request) {
     const body = await req.text();
     const sig = req.headers.get("stripe-signature")!;
-    console.log('comming on post main function....');
     let event: Stripe.Event;
 
     try {
@@ -43,6 +39,7 @@ export async function POST(req: Request) {
     }
 
     switch (event.type) {
+        //When stripe Payment done successfully
         case "checkout.session.completed": {
             const session = event.data.object as Stripe.Checkout.Session;
             const customerEmail = session.customer_details?.email ?? null;
@@ -63,7 +60,7 @@ export async function POST(req: Request) {
             if (customerEmail) {
 
                 const mailType = `Access-Delivery*${transactionId}`;
-                
+
                 const results = await Promise.allSettled([
                     //sendEmail(customerEmail, emailSubject, mailType),
                     sendEmail(
@@ -97,13 +94,14 @@ export async function POST(req: Request) {
             break;
         }
 
+        //When stripe checkout session expired
         case "checkout.session.expired": {
             const session = event.data.object as Stripe.Checkout.Session;
             const transactionId = session.metadata?.transaction_id;
             const customerEmail = session.customer_details?.email ?? null;
 
             // check email and throe email
-            if (customerEmail) {                             
+            if (customerEmail) {
                 //Payment failed
                 await sendEmail(customerEmail, "Your payment could not be completed.", "Payment-failed");
             }
@@ -117,7 +115,27 @@ export async function POST(req: Request) {
 
             break;
         }
-    }
 
-    return NextResponse.json({ received: true });
-}
+        //When refund is success
+        case "charge.refunded": {
+            const charge = event.data.object as Stripe.Charge;
+            await sendEmail(charge.billing_details.email!, "Your refund has been processed.", "refund-success");
+            break;
+        }
+
+        //When stripe refund faild
+        case "refund.failed": {
+            const refund = event.data.object as Stripe.Refund;
+
+            // You may need to retrieve charge to get email
+            const chargeData = await stripe.charges.retrieve(
+                refund.charge as string
+            );
+
+            await sendEmail(chargeData.billing_details.email!, "Your refund request has been reviewed.", "refund-faild");
+
+            break;
+        }
+
+        return NextResponse.json({ received: true });
+    }

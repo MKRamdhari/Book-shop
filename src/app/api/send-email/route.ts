@@ -41,11 +41,29 @@ export async function POST(req: Request) {
 
     }
     else if (emailType === "Payment-failed") {
-      // This email will go whe payment is canceled
+      // This email will go when payment is canceled
 
       templatePath = path.join(
         process.cwd(),
         "emails/payment-faild"
+      );
+      pdfLink = `${process.env.BASE_URL}`;
+    }
+    else if (emailType === "refund-success") {
+      // This email will go when refund payment
+
+      templatePath = path.join(
+        process.cwd(),
+        "emails/refund-processed"
+      );
+      pdfLink = `${process.env.BASE_URL}`;
+    }
+    else if (emailType === "refund-faild") {
+      // This email will go when refund payment faild
+
+      templatePath = path.join(
+        process.cwd(),
+        "emails/refund-declined"
       );
       pdfLink = `${process.env.BASE_URL}`;
     }
