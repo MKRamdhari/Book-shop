@@ -32,22 +32,22 @@ export async function POST(req: Request) {
       UnsubscribeUrl = `${process.env.BASE_URL}/?status=Unsubscribe&tx=${subscribeId}`;
       templatePath = path.join(process.cwd(), "emails/free-chapter-one.html");
 
-    // PURCHASE CONFIRMED
+      // PURCHASE CONFIRMED
     } else if (emailType === "Purchase-Confirmed") {
       templatePath = path.join(process.cwd(), "emails/purchase-confirmation.html");
       pdfLink = `${process.env.BASE_URL}`;
 
-    // PAYMENT FAILED
+      // PAYMENT FAILED
     } else if (emailType === "Payment-failed") {
       templatePath = path.join(process.cwd(), "emails/payment-faild.html");
       pdfLink = `${process.env.BASE_URL}`;
 
-    // REFUND SUCCESS
+      // REFUND SUCCESS
     } else if (emailType === "refund-success") {
       templatePath = path.join(process.cwd(), "emails/refund-processed.html");
       pdfLink = `${process.env.BASE_URL}`;
 
-    // Email types 1,2,3,4 (may send to multiple emails)
+      // Email types 1,2,3,4 (may send to multiple emails)
     } else if (["1", "2", "3", "4"].includes(emailType)) {
 
       // Fetch all subscribed emails if subject === "all"
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
         templatePath = path.join(process.cwd(), "emails/product-update.html");
       }
 
-    // DEFAULT / ACCESS DELIVERY
+      // DEFAULT / ACCESS DELIVERY
     } else {
       const parts = emailType.split("*");
       const transactionIdValue = parts[1] ?? "";
@@ -105,13 +105,20 @@ export async function POST(req: Request) {
 
     // SEND EMAIL
     if (Array.isArray(email)) {
-      for (const e of email) {
-        await sendEmail({
-          to: e,
-          subject,
-          html,
-        });
-      }
+      // send all emails in parallel
+      await Promise.all(
+        email.map(async (e) => {
+          try {
+            await sendEmail({
+              to: e,
+              subject,
+              html,
+            });
+          } catch (err) {
+            console.error(`Failed to send email to ${e}:`, err);
+          }
+        })
+      );
     } else {
       await sendEmail({
         to: email,
