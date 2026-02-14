@@ -1,20 +1,19 @@
 "use client"; // must be first line
 
-export const dynamic = "force-dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import toast from "react-hot-toast";
 
-export default function LoginPage() {
+export function InnerLoginPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [password, setPassword] = useState("");
-
-  const success = searchParams.get("success");
-  const error = searchParams.get("error");
+  const [password, setPassword] = useState(""); 
 
   useEffect(() => {
+    const success = searchParams.get("success");
+    const error = searchParams.get("error");
+
     if (!error && !success) return;
 
     if (error === "unauthorized") {
@@ -22,12 +21,12 @@ export default function LoginPage() {
     }
 
     if (success === "logout") {
-      toast.success("Logged out successfully.");
+     // toast.success("Logged out successfully.");
     }
 
     // Remove query params safely without using window
     router.replace("/login");
-  }, [error, success, router]);
+  }, [searchParams, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,5 +63,18 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  
+ 
+
+  return (
+    <>
+     <Suspense fallback={null}>
+        <InnerLoginPage></InnerLoginPage>    
+      </Suspense>
+    </>
   );
 }
